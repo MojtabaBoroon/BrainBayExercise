@@ -62,5 +62,21 @@ namespace BrainBayUnitTestsProject.Characters.QueryHandler
             Assert.NotNull(result);
             Assert.True(result.Count == count);
         }
+
+        [Theory]
+        [InlineData("Earth")]
+        public async Task HandleAsync_PlanetIsValid_RepositoryIsCalled(string planet)
+        {
+            // Arrange
+            _characterRepositoryMock.Setup(x => x.GetCharactersAsync())
+                                .ReturnsAsync(_characters);
+            var handler = new GetCharactersByPlanetNameQueryHandler(_characterRepositoryMock.Object);
+
+            // Act
+            var result = await handler.HandleAsync(new GetCharactersByPlanetNameQuery { PlanetName = planet });
+
+            // Assert
+            _characterRepositoryMock.Verify(x => x.GetCharactersAsync(), Times.Once);
+        }
     }
 }

@@ -8,14 +8,14 @@ namespace BrainBayUnitTestsProject.Characters.CommandHandler
 {
     public class CharactersCommandHandlerTests
     {
-        private readonly Mock<IRickAndMortyApiClient> _charactersQueryExecutorMock;
+        private readonly Mock<IRickAndMortyApiClient> _rickAndMortyApiClientMock;
         Mock<ICharacterRepository> _characterRepositoryMock;
 
         List<Character> _characters = new();
 
         public CharactersCommandHandlerTests()
         {
-            _charactersQueryExecutorMock = new Mock<IRickAndMortyApiClient>(); ;
+            _rickAndMortyApiClientMock = new Mock<IRickAndMortyApiClient>(); ;
             _characterRepositoryMock = new Mock<ICharacterRepository> ();
             _characters = Createcharacter();
         }
@@ -34,9 +34,9 @@ namespace BrainBayUnitTestsProject.Characters.CommandHandler
         public async Task HandleAsync_InputIsValid_ShouldReturnAliveCharacters()
         {
             // Arrange
-            var handler = new CharactersCommandHandler(_charactersQueryExecutorMock.Object, _characterRepositoryMock.Object);
+            var handler = new CharactersCommandHandler(_rickAndMortyApiClientMock.Object, _characterRepositoryMock.Object);
 
-            _charactersQueryExecutorMock.Setup(x => x.GetAsync()).ReturnsAsync(_characters);
+            _rickAndMortyApiClientMock.Setup(x => x.GetAsync()).ReturnsAsync(_characters);
             _characterRepositoryMock.Setup(x => x.InsertAsync(It.IsAny<List<Character>>())).Returns(Task.CompletedTask);
 
             // Act
@@ -47,6 +47,33 @@ namespace BrainBayUnitTestsProject.Characters.CommandHandler
             Assert.Contains(result, c => c.Name == "Character 1" && c.Status == "Alive");
             Assert.Contains(result, c => c.Name == "Character 3" && c.Status == "Alive");
         }
-       
+
+        [Fact]
+        public async Task HandleAsync_InputIsValid_RepositoryIsCalled()
+        {
+            // Arrange
+            var handler = new CharactersCommandHandler(_rickAndMortyApiClientMock.Object, _characterRepositoryMock.Object);
+
+            _rickAndMortyApiClientMock.Setup(x => x.GetAsync()).ReturnsAsync(_characters);
+            _characterRepositoryMock.Setup(x => x.InsertAsync(It.IsAny<List<Character>>())).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await handler.HandleAsync(new CharactersCommand());
+            _characterRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<List<Character>>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task HandleAsync_InputIsValid_ApiClientIsCalled()
+        {
+            // Arrange
+            var handler = new CharactersCommandHandler(_rickAndMortyApiClientMock.Object, _characterRepositoryMock.Object);
+
+            _rickAndMortyApiClientMock.Setup(x => x.GetAsync()).ReturnsAsync(_characters);
+            _characterRepositoryMock.Setup(x => x.InsertAsync(It.IsAny<List<Character>>())).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await handler.HandleAsync(new CharactersCommand());
+            _rickAndMortyApiClientMock.Verify(x => x.GetAsync(), Times.Once);
+        }
     }
 }
