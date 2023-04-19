@@ -38,7 +38,7 @@ namespace BrainbayMVCApp.Controllers
 
             await CallExternalApi();
 
-            if (!_cache.TryGetValue("characters", out _characters) || _characters.Count == 1)
+            if (!_cache.TryGetValue("characters", out _characters))
             {
                 _characters = await _getCharactersByPlanetQueryHandler.HandleAsync(new GetCharactersByPlanetNameQuery { PlanetName = _planet });
                 result = _characters.ToList();
@@ -84,7 +84,7 @@ namespace BrainbayMVCApp.Controllers
                 await _insertCharacterCommanddHandler.HandleAsync(new InsertCharacterCommand { Character = character });
 
                 _cache.Remove("characters");
-                return RedirectToAction(nameof(Index), new { planet = character.Origin.Name });
+                return RedirectToAction(nameof(Index));
             }
             return View(character);
         }

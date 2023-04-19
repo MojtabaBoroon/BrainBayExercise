@@ -23,11 +23,11 @@ namespace BrainBayUnitTestsProject.Characters.CommandHandler
         private List<Character> Createcharacter()
         {
             return new List<Character>
-                {
-                new Character { Name = "Character 1", Status = "Alive" },
-                new Character { Name = "Character 2", Status = "Dead" },
-                new Character { Name = "Character 3", Status = "Alive" }
-                };
+            {
+            new Character { Name = "Character 1", Status = "Alive" },
+            new Character { Name = "Character 2", Status = "Dead" },
+            new Character { Name = "Character 3", Status = "Alive" }
+            };
         }
 
         [Fact]
