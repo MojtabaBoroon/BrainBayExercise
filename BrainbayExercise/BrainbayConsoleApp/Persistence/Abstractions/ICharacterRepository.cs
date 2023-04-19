@@ -7,5 +7,6 @@ namespace BrainbayConsoleApp.Persistence.Abstractions
         Task InsertAsync(List<Character> characters);
         Task InsertAsync(Character character);
         Task<List<Character>> GetCharactersAsync();
+        public void ClearAsync();
     }
 }

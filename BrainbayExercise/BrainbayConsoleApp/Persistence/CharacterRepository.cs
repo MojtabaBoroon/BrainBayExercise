@@ -21,12 +21,32 @@ namespace BrainbayConsoleApp.Persistence
                  .Include(c => c.Episodes)
                  .ToListAsync();
         }
+        public void ClearAsync()
+        {
+            var DbCharacters = _brainBayDbContext.Characters
+                 .Include(c => c.Episodes)
+                 .Include(c => c.Location)
+                 .Include(c => c.Origin);
+
+            if (DbCharacters != null)
+            {
+                foreach (var character in DbCharacters)
+                {
+                    _brainBayDbContext.Episodes.RemoveRange(character.Episodes);
+                    _brainBayDbContext.Locations.RemoveRange(character.Location);
+                    _brainBayDbContext.Origins.RemoveRange(character.Origin);
+                }
+
+                _brainBayDbContext.Characters.RemoveRange(DbCharacters);
+
+                _brainBayDbContext.SaveChanges();
+            }
+        }
 
         public async Task InsertAsync(List<Character> characters)
         {
             using (var context = new BrainBayDbContext())
             {
-                ClearDbTables(context);
                 await context.Characters.AddRangeAsync(characters);
                 await context.SaveChangesAsync();
             }
@@ -38,28 +58,6 @@ namespace BrainbayConsoleApp.Persistence
             {
                 await context.Characters.AddAsync(character);
                 await context.SaveChangesAsync();
-            }
-        }
-
-        private static void ClearDbTables(BrainBayDbContext context)
-        {
-            var DbCharacters = context.Characters
-                 .Include(c => c.Episodes)
-                 .Include(c => c.Location)
-                 .Include(c => c.Origin);
-
-            if (DbCharacters != null)
-            {
-                foreach (var character in DbCharacters)
-                {
-                    context.Episodes.RemoveRange(character.Episodes);
-                    context.Locations.RemoveRange(character.Location);
-                    context.Origins.RemoveRange(character.Origin);
-                }
-
-                context.Characters.RemoveRange(DbCharacters);
-
-                context.SaveChanges();
             }
         }
     }

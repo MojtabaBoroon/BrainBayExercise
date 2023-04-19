@@ -22,6 +22,7 @@ namespace BrainbayConsoleApp.Applications.Characters.Commands
         {
             _characters = await _rickAndMortyApiClient.GetAsync();
             var aliveCharacters = FindAliveCharacters(_characters);
+            _characterRepository.ClearAsync();
             await _characterRepository.InsertAsync(aliveCharacters);
 
             return aliveCharacters;

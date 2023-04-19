@@ -22,6 +22,7 @@ ServiceProvider ServiceRegistrator()
         .AddTransient<IRickAndMortyApiClient, RickAndMortyApiClient>()
         .AddTransient<IQueryHandler<GetCharactersByPlanetNameQuery, List<Character>>, GetCharactersByPlanetNameQueryHandler>()
         .AddTransient<ICommandHandler<CharactersCommand, List<Character>>, CharactersCommandHandler>()
+        .AddTransient<ICommandHandler<InsertCharacterCommand, Character>, InsertCharacterCommandHandler>()
         .AddTransient<BrainBayDbContext, BrainBayDbContext>()
         .AddAutoMapper(typeof(CharacterDtoMapper))
         .BuildServiceProvider();
